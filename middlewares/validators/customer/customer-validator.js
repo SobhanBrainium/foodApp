@@ -8,7 +8,7 @@ module.exports = {
             firstName: joi.string().required().error(new Error('First name is required')),
             lastName: joi.string().required().error(new Error('Last name is required')),
             email: joi.string().email().error(new Error('Valid email is required')),
-            phone: joi.number().integer().error(new Error('Valid phone no is required')),
+            dob: joi.date().required().error(new Error('Valid dob is required')),
             socialId: joi.string().allow('').optional(),
             location: joi.string().allow('').optional(),
             password: joi.string().allow('').optional(),
@@ -252,7 +252,7 @@ module.exports = {
             customerId: joi.string().required().error(new Error('Customer id is required')),
             firstName: joi.string().required().error(new Error('First name is required')),
             lastName: joi.string().required().error(new Error('Last name is required')),
-            gender: joi.string().required().error(new Error('Gender is required')),
+            // gender: joi.string().required().error(new Error('Gender is required')),
             // email: joi.string().required().email().error((err) => {
             //     if (err[0].value === undefined || err[0].value === '' || err[0].value === null) {
             //         return new Error('Email is required');
@@ -418,7 +418,7 @@ module.exports = {
         const rules = joi.object({
             cid : joi.string().required().error(new Error('CustomerId is required')),
             otp: joi.number().required().error(new Error('OTP is required')),
-            phone: joi.number().required().error(new Error('Phone number is required')),
+            email: joi.string().required().error(new Error('email is required')),
         });
 
         const value = await rules.validate(req.body);

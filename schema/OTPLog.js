@@ -8,7 +8,7 @@ const Schema = mongoose.Schema;
  */
 const otpSchema = new Schema({
     userId : { type : Schema.Types.ObjectId, required : false},
-    phone : {type : Number, required : true},
+    email : {type : String, required : true},
     otp : { type : Number, required : true, unique : true},
     usedFor : { type : String, required : true},
     status : { type : Number},

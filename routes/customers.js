@@ -118,15 +118,13 @@ customerAPI.post('/registration', customerValidator.customerRegister, async (req
             }
         }else{
             //check customer existence with email or phone
-            const isCustomerExistWithNormal = await User.findOne({loginType: 'EMAIL', $or : [
-                {email : data.email}, {phone: data.phone}
-            ]})
+            const isCustomerExistWithNormal = await User.findOne({loginType: 'EMAIL', email : data.email})
 
             if(isCustomerExistWithNormal != null){
                 res.send({
                     success: false,
                     STATUSCODE: 422,
-                    message: 'User already exists for this phone no or email.',
+                    message: 'User already exists for this email.',
                     response_data: {}
                 })
             }else{
@@ -153,7 +151,7 @@ customerAPI.post('/registration', customerValidator.customerRegister, async (req
                         //#region save OTP to DB
                         const addedOTPToTable = new OTPLog({
                             userId : addCustomerWithNormalRegistration._id,
-                            phone : addCustomerWithNormalRegistration.phone,
+                            email : addCustomerWithNormalRegistration.email,
                             otp : generateRegisterOTP,
                             usedFor : "Registration",
                             status : 1
@@ -214,9 +212,16 @@ customerAPI.post('/login', customerValidator.customerLogin, async (req, res) => 
                 if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(data.user)) {
                     loginCond = { email: data.user, loginType: 'EMAIL', isActive : true };
                     loginUser = 'EMAIL';
-                } else {
-                    loginCond = { phone: data.user, loginType: 'EMAIL', isActive : true };
-                    loginUser = 'PHONE';
+                } 
+                else {
+                    // loginCond = { phone: data.user, loginType: 'EMAIL', isActive : true };
+                    // loginUser = 'PHONE';
+                    res.send({
+                        success: false,
+                        STATUSCODE: 422,
+                        message: 'Please enter correct email. Ex- a@a.com',
+                        response_data: {}
+                    });
                 }
             }
 
@@ -286,7 +291,7 @@ customerAPI.post('/login', customerValidator.customerLogin, async (req, res) => 
                                     firstName: isCustomerExist.firstName,
                                     lastName: isCustomerExist.lastName,
                                     email: isCustomerExist.email,
-                                    phone: isCustomerExist.phone.toString(),
+                                    phone: isCustomerExist.phone,
                                     socialId: isCustomerExist.socialId,
                                     id: isCustomerExist._id,
                                     loginId: loginId,
@@ -392,9 +397,9 @@ customerAPI.post('/editProfile',jwtTokenValidator.validateToken, customerValidat
         //     userDetail.phone = req.body.phone
         // }
 
-        if(req.body.gender != ''){
-            userDetail.gender = req.body.gender
-        }
+        // if(req.body.gender != ''){
+        //     userDetail.gender = req.body.gender
+        // }
 
         const updateUserDetail = await userDetail.save()
 
@@ -2213,7 +2218,7 @@ customerAPI.post('/otpVerification', customerValidator.OTPVerification, async (r
     try {
         let data = req.body
         if(data != null){
-            const isChecked = await OTPLog.findOne({userId : data.cid, otp : data.otp, phone : data.phone, status : 1})
+            const isChecked = await OTPLog.findOne({userId : data.cid, otp : data.otp, email : data.email, status : 1})
             if(isChecked != null){
                 //deactivate the OTP with status  2
                 isChecked.status = 2;
