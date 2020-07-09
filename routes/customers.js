@@ -121,12 +121,21 @@ customerAPI.post('/registration', customerValidator.customerRegister, async (req
             const isCustomerExistWithNormal = await User.findOne({loginType: 'EMAIL', email : data.email})
 
             if(isCustomerExistWithNormal != null){
-                res.send({
-                    success: false,
-                    STATUSCODE: 422,
-                    message: 'User already exists for this email.',
-                    response_data: {}
-                })
+                if(isCustomerExistWithNormal.isActive === false){
+                    return res.send({
+                        success: false,
+                        STATUSCODE: 423,
+                        message: 'User already exists. But OTP is not verified yet.',
+                        response_data: {}
+                    })
+                }else{
+                    res.send({
+                        success: false,
+                        STATUSCODE: 422,
+                        message: 'User already exists for this email.',
+                        response_data: {}
+                    })
+                }
             }else{
 
                 const addCustomerWithNormalRegistration = await new User(data).save()
@@ -2218,6 +2227,8 @@ customerAPI.post('/otpVerification', customerValidator.OTPVerification, async (r
                 isChecked.status = 2;
                 await isChecked.save();
 
+                let finalResponse = {}
+
                 if(isChecked.usedFor == 'Registration'){
                     const userDetail = await User.findOne({_id : isChecked.userId})
                     //activate the user
@@ -2226,12 +2237,41 @@ customerAPI.post('/otpVerification', customerValidator.OTPVerification, async (r
                     //end
 
                     mail('userRegistrationMail')(activateData.email, activateData).send();
+
+                    //ADD DATA IN USER LOGIN DEVICE TABLE
+                    const userDeviceData = {
+                        userId: activateData._id,
+                        userType: 'CUSTOMER',
+                        appType: activateData.appType,
+                        pushMode: activateData.pushMode,
+                        deviceToken: activateData.deviceToken
+                    }
+
+                    const success = await new userDeviceLoginSchema(userDeviceData).save()
+                    let loginId = success._id;
+
+                    const authToken = generateToken(activateData);
+
+                    finalResponse =  {
+                        userDetails: {
+                            name: activateData.name,
+                            email: activateData.email,
+                            phone: activateData.phone,
+                            socialId: activateData.socialId,
+                            id: activateData._id,
+                            loginId: loginId,
+                            profileImage: `${config.serverhost}:${config.port}/img/profile-pic/` + activateData.profileImage,
+                            userType: 'customer',
+                            loginType: activateData.loginType
+                        },
+                        authToken: authToken
+                    }
                 }
                 res.send({
                     success: true,
                     STATUSCODE: 200,
                     message: 'OTP verification successfully.',
-                    response_data: {}
+                    response_data: finalResponse
                 })
             }else{
                 res.send({

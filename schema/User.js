@@ -7,7 +7,7 @@ const userSchema = new Schema({
     name : { type : String, required : true},
     gender : { type : String, default : ''},
     email : {type : String, required : true},
-    phone : { type : Number, default : null},
+    phone : { type : String, default : ''},
     dob : { type : String, default : null},
     password : {type : String, default : null},
     location: { type: String, default: '' },
