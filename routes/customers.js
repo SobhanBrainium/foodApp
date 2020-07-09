@@ -253,8 +253,7 @@ customerAPI.post('/login', customerValidator.customerLogin, async (req, res) => 
                     const authToken = generateToken(isCustomerExist);
                     let response = {
                         userDetails: {
-                            firstName: isCustomerExist.firstName,
-                            lastName: isCustomerExist.lastName,
+                            name: isCustomerExist.name,
                             email: isCustomerExist.email,
                             phone: isCustomerExist.phone,
                             socialId: isCustomerExist.socialId,
@@ -288,8 +287,7 @@ customerAPI.post('/login', customerValidator.customerLogin, async (req, res) => 
                             const authToken = generateToken(isCustomerExist);
                             let response = {
                                 userDetails: {
-                                    firstName: isCustomerExist.firstName,
-                                    lastName: isCustomerExist.lastName,
+                                    name: isCustomerExist.name,
                                     email: isCustomerExist.email,
                                     phone: isCustomerExist.phone,
                                     socialId: isCustomerExist.socialId,
@@ -344,10 +342,10 @@ customerAPI.post('/login', customerValidator.customerLogin, async (req, res) => 
 customerAPI.get('/viewProfile',jwtTokenValidator.validateToken, async(req, res) => {
     try {
         let response = {
-            firstName: req.user.firstName,
-            lastName: req.user.lastName,
+            name: req.user.name,
             email: req.user.email,
-            phone: req.user.phone
+            phone: req.user.phone,
+            userType : req.user.userType
         }
 
         if (req.user.profileImage != '') {
@@ -381,12 +379,8 @@ customerAPI.post('/editProfile',jwtTokenValidator.validateToken, customerValidat
 
         const userDetail =  await User.findById(userId)
         
-        if(req.body.firstName != ''){
-            userDetail.firstName = req.body.firstName
-        }
-
-        if(req.body.lastName != ''){
-            userDetail.lastName = req.body.lastName
+        if(req.body.name != ''){
+            userDetail.name = req.body.name
         }
 
         // if(req.body.email != ''){

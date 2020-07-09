@@ -5,8 +5,8 @@ module.exports = {
         const appTypeVal = ["ANDROID", "IOS"];
         const pushType = ["P", "S"];
         const rules = joi.object({
-            firstName: joi.string().required().error(new Error('First name is required')),
-            lastName: joi.string().required().error(new Error('Last name is required')),
+            name: joi.string().required().error(new Error('name is required')),
+            userType : joi.string().required().error(new Error('userType is required')),
             email: joi.string().email().error(new Error('Valid email is required')),
             dob: joi.date().required().error(new Error('Valid dob is required')),
             socialId: joi.string().allow('').optional(),
@@ -250,8 +250,7 @@ module.exports = {
         const userTypeVal = ["customer", "deliveryboy", "vendorowner"];
         const rules = joi.object({
             customerId: joi.string().required().error(new Error('Customer id is required')),
-            firstName: joi.string().required().error(new Error('First name is required')),
-            lastName: joi.string().required().error(new Error('Last name is required')),
+            name: joi.string().required().error(new Error('name is required')),
             // gender: joi.string().required().error(new Error('Gender is required')),
             // email: joi.string().required().email().error((err) => {
             //     if (err[0].value === undefined || err[0].value === '' || err[0].value === null) {

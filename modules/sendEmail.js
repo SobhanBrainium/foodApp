@@ -53,19 +53,19 @@ module.exports = function(emailType) {
                 /** Temporary Email text */
                 switch(emailType) {
                     case 'userRegistrationMail': 
-                        mailOption.text = `Hello ${data.firstName}, welcome to Food Club.`
+                        mailOption.text = `Hello ${data.name}, welcome to Food Club.`
                         break;
                     case 'forgotPasswordMail': 
-                        mailOption.text = `Hello ${data.firstName}, use ${data.forgotPasswordOtp} code to reset your password.`
+                        mailOption.text = `Hello ${data.name}, use ${data.forgotPasswordOtp} code to reset your password.`
                         break;
                     case 'sendOTPdMail' : 
-                        mailOption.text = `Hello ${data.firstName}, your OTP is ${data.otp}. Please verify it.`
+                        mailOption.text = `Hello ${data.name}, your OTP is ${data.otp}. Please verify it.`
                         break;
                     case 'resendOtpMail':
-                        mailOption.text = `Hello ${data.firstName}, use ${data.otp} code to verify your account.`
+                        mailOption.text = `Hello ${data.name}, use ${data.otp} code to verify your account.`
                         break;
                     case 'restaurantAdminWelcomeMail' :
-                        mailOption.text = `Hello ${data.firstName}. welcome to Food Club. Your login credential is email ${data.email} and password ${option}. Login URL ${config.serverhost}:${config.port}`
+                        mailOption.text = `Hello ${data.name}. welcome to Food Club. Your login credential is email ${data.email} and password ${option}. Login URL ${config.serverhost}:${config.port}`
                 }
  
 

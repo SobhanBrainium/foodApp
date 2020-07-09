@@ -4,8 +4,7 @@ import bcrypt from "bcryptjs"
 const Schema = mongoose.Schema
 
 const userSchema = new Schema({
-    firstName : { type : String, required : true},
-    lastName : { type : String, required : true},
+    name : { type : String, required : true},
     gender : { type : String, default : ''},
     email : {type : String, required : true},
     phone : { type : Number, default : null},
@@ -19,6 +18,7 @@ const userSchema = new Schema({
     loginType: { type: String, default: 'EMAIL'},
     socialId : {type: String, default: ''},
     pushMode : {type: String, default: ''},
+    userType : { type : String, required : true}
 },{
     timestamps: true
 });
