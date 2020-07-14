@@ -126,7 +126,7 @@ customerAPI.post('/registration', customerValidator.customerRegister, async (req
                         success: false,
                         STATUSCODE: 423,
                         message: 'User already exists. But OTP is not verified yet.',
-                        response_data: {}
+                        response_data: isCustomerExistWithNormal
                     })
                 }else{
                     res.send({
@@ -547,7 +547,7 @@ customerAPI.post('/forgotPassword', customerValidator.forgotPasswordEmail, async
                 //#region save OTP to DB
                 const addedOTPToTable = new OTPLog({
                     userId : checkCustomerIsExist._id,
-                    phone : checkCustomerIsExist.phone,
+                    email : checkCustomerIsExist.email,
                     otp : forgotPasswordOtp,
                     usedFor : "ForgotPassword",
                     status : 1
@@ -606,7 +606,7 @@ customerAPI.post('/resetPassword', customerValidator.resetPassword, async(req, r
                         data : {
                             otp : data.otp,
                             cid : customerIsExist._id,
-                            phone : customerIsExist.phone
+                            email : customerIsExist.email
                         }
                     })
                 ])
@@ -652,7 +652,7 @@ customerAPI.post('/resetPassword', customerValidator.resetPassword, async(req, r
 //#endregion
 
 //#region  Change Email */
-customerAPI.post('/changeEmail', customerValidator.forgotPasswordEmail, async(req, res) => {
+customerAPI.post('/changeEmail', jwtTokenValidator.validateToken, customerValidator.forgotPasswordEmail, async(req, res) => {
     try {
         const data = req.body
         if (data) {
@@ -665,7 +665,7 @@ customerAPI.post('/changeEmail', customerValidator.forgotPasswordEmail, async(re
                 //#region save OTP to DB
                 const addedOTPToTable = new OTPLog({
                     userId : checkCustomerIsExist._id,
-                    phone : checkCustomerIsExist.phone,
+                    email : checkCustomerIsExist.email,
                     otp : forgotPasswordOtp,
                     usedFor : "ChangeEmail",
                     status : 1
@@ -724,7 +724,7 @@ customerAPI.post('/resetEmail', jwtTokenValidator.validateToken, customerValidat
                     data : {
                         otp : data.otp,
                         cid : userDetail._id,
-                        phone : userDetail.phone
+                        email : userDetail.email
                     }
                 })
             ])
