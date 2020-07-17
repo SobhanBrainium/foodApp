@@ -396,9 +396,9 @@ customerAPI.post('/editProfile',jwtTokenValidator.validateToken, customerValidat
         //     userDetail.email = req.body.email
         // }
 
-        // if(req.body.phone != ''){
-        //     userDetail.phone = req.body.phone
-        // }
+        if(req.body.phone != ''){
+            userDetail.phone = req.body.phone
+        }
 
         // if(req.body.gender != ''){
         //     userDetail.gender = req.body.gender

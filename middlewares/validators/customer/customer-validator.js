@@ -109,7 +109,7 @@ module.exports = {
                     return new Error('Please enter valid email');
                 }
             }),
-            userType: joi.string().required().valid(...userTypeVal).error(new Error('Please send userType'))
+            // userType: joi.string().required().valid(...userTypeVal).error(new Error('Please send userType'))
         });
 
         const value = await rules.validate(req.body);
@@ -162,7 +162,7 @@ module.exports = {
                     return new Error('Password and confirm password must match');
                 }
             }),
-            userType: joi.string().required().valid(...userTypeVal).error(new Error('Please send userType'))
+            // userType: joi.string().required().valid(...userTypeVal).error(new Error('Please send userType'))
         });
 
         const value = await rules.validate(req.body);
@@ -259,13 +259,13 @@ module.exports = {
             //         return new Error('Please enter valid email');
             //     }
             // }),
-            // phone: joi.number().required().error((err) => {
-            //     if (err[0].value === undefined || err[0].value === '' || err[0].value === null) {
-            //         return new Error('Phone is required');
-            //     } else if (typeof err[0].value === 'string') {
-            //         return new Error('Please enter valid phone');
-            //     }
-            // }),
+            phone: joi.number().required().error((err) => {
+                if (err[0].value === undefined || err[0].value === '' || err[0].value === null) {
+                    return new Error('Phone is required');
+                } else if (typeof err[0].value === 'string') {
+                    return new Error('Please enter valid phone');
+                }
+            }),
             userType: joi.string().required().valid(...userTypeVal).error(new Error('Please send userType')),
             loginType: joi.string().required().error(new Error('Please send valid loginType'))
         });
