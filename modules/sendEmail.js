@@ -1,6 +1,11 @@
 import nodeMailer from "nodemailer"
 import nodeMailerSmtpTransport from "nodemailer-smtp-transport"
 import config from "../config"
+import welcome from "./welcomeMail"
+import forgotPassword from "./forgotPasswordMail"
+import changeEmail from "./changeEmailMail"
+import OTP from "./OTPmail"
+import resent from "./resentOTPMail"
 
 module.exports = function(emailType) {
     const emailFrom = config.emailConfig.MAIL_USERNAME;
@@ -25,6 +30,12 @@ module.exports = function(emailType) {
         },
         "restaurantAdminWelcomeMail" : {
             subject : "Welcome to Food Club"
+        },
+        "changeEmailMail" : {
+            subject : "Change Email"
+        }, 
+        "testingMail" : {
+            subject : "Test email",
         }
     };
 
@@ -53,21 +64,28 @@ module.exports = function(emailType) {
                 /** Temporary Email text */
                 switch(emailType) {
                     case 'userRegistrationMail': 
-                        mailOption.text = `Hello ${data.name}, welcome to Food Club.`
+                        mailOption.html = welcome(data)
                         break;
                     case 'forgotPasswordMail': 
-                        mailOption.text = `Hello ${data.name}, use ${data.forgotPasswordOtp} code to reset your password.`
+                        mailOption.html = forgotPassword(data)
+                        break;
+                    case 'changeEmailMail' :
+                        mailOption.html = changeEmail(data)
                         break;
                     case 'sendOTPdMail' : 
-                        mailOption.text = `Hello ${data.name}, your OTP is ${data.otp}. Please verify it.`
+                        mailOption.html = OTP(data)
                         break;
                     case 'resendOtpMail':
-                        mailOption.text = `Hello ${data.name}, use ${data.otp} code to verify your account.`
+                        mailOption.html = resent(data)
                         break;
                     case 'restaurantAdminWelcomeMail' :
-                        mailOption.text = `Hello ${data.name}. welcome to Food Club. Your login credential is email ${data.email} and password ${option}. Login URL ${config.serverhost}:${config.port}`
+                        mailOption.html = `Hello ${data.name}. welcome to Food Club. Your login credential is email ${data.email} and password ${option}. Login URL ${config.serverhost}:${config.port}`
+                        break;
+
+                    case 'testingMail' : 
+                        mailOption.html = welcome(data)
+                        break;
                 }
- 
 
                 transporter.sendMail(mailOption, function(error, info) {
                     if (error) {

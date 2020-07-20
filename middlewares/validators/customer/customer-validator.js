@@ -109,6 +109,32 @@ module.exports = {
                     return new Error('Please enter valid email');
                 }
             }),
+            // userType: joi.string().required().valid(...userTypeVal).error(new Error('Please send userType')),
+            // customerId : joi.string().required().error(new Error('Please send customerId')),
+        });
+
+        const value = await rules.validate(req.body);
+        if (value.error) {
+            res.status(422).json({
+                success: false,
+                STATUSCODE: 422,
+                message: value.error.message
+            })
+        } else {
+            next();
+        }
+    },
+
+    changeEmailValidate: async (req, res, next) => {
+        const userTypeVal = ["customer", "deliveryboy", "vendorowner", "admin", "vendoradmin"];
+        const rules = joi.object({
+            email: joi.string().required().email().error((err) => {
+                if (err[0].value === undefined || err[0].value === '' || err[0].value === null) {
+                    return new Error('Email is required');
+                } else {
+                    return new Error('Please enter valid email');
+                }
+            }),
             userType: joi.string().required().valid(...userTypeVal).error(new Error('Please send userType')),
             customerId : joi.string().required().error(new Error('Please send customerId')),
         });

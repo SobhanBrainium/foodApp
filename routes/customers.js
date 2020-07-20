@@ -64,6 +64,15 @@ let restrictImgType = function(req, file, cb) {
 const upload = multer({ storage: storage, limits: {fileSize: 10485760 , fileFilter:restrictImgType} }).single('image');
 //#endregion
 
+//#region testing email template
+customerAPI.post('/testingEmail',async (req, res) => {
+    let obj = {
+        name : "sobhan"
+    }
+    mail('testingMail')('sobhan.das@brainiuminfotech.com', obj).send();
+})
+//#endregion
+
 //#region registration
 customerAPI.post('/registration', customerValidator.customerRegister, async (req, res) => {
     try {
@@ -652,7 +661,7 @@ customerAPI.post('/resetPassword', customerValidator.resetPassword, async(req, r
 //#endregion
 
 //#region  Change Email */
-customerAPI.post('/changeEmail', jwtTokenValidator.validateToken, customerValidator.forgotPasswordEmail, async(req, res) => {
+customerAPI.post('/changeEmail', jwtTokenValidator.validateToken, customerValidator.changeEmailValidate, async(req, res) => {
     try {
         const data = req.body
         if (data) {
@@ -674,7 +683,7 @@ customerAPI.post('/changeEmail', jwtTokenValidator.validateToken, customerValida
                 //#endregion
 
                 try {
-                    mail('forgotPasswordMail')(data.email, customer).send();
+                    mail('changeEmailMail')(data.email, customer).send();
                     res.send({
                         success: true,
                         STATUSCODE: 200,
