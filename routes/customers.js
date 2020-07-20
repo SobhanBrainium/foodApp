@@ -656,7 +656,7 @@ customerAPI.post('/changeEmail', jwtTokenValidator.validateToken, customerValida
     try {
         const data = req.body
         if (data) {
-            const checkCustomerIsExist = await User.findOne({email: data.email, loginType: 'EMAIL'})
+            const checkCustomerIsExist = await User.findOne({_id: data.customerId, loginType: 'EMAIL', userType : data.userType})
             if(checkCustomerIsExist != null){
                 let forgotPasswordOtp = generateOTP();
                 let customer = checkCustomerIsExist.toObject();
@@ -665,7 +665,7 @@ customerAPI.post('/changeEmail', jwtTokenValidator.validateToken, customerValida
                 //#region save OTP to DB
                 const addedOTPToTable = new OTPLog({
                     userId : checkCustomerIsExist._id,
-                    email : checkCustomerIsExist.email,
+                    email : data.email,
                     otp : forgotPasswordOtp,
                     usedFor : "ChangeEmail",
                     status : 1
@@ -674,14 +674,14 @@ customerAPI.post('/changeEmail', jwtTokenValidator.validateToken, customerValida
                 //#endregion
 
                 try {
-                    mail('forgotPasswordMail')(customer.email, customer).send();
+                    mail('forgotPasswordMail')(data.email, customer).send();
                     res.send({
                         success: true,
                         STATUSCODE: 200,
                         message: 'Please check your email. We have sent a code to be used to reset email.',
                         response_data: {
                             id : customer._id,
-                            email: customer.email,
+                            email: data.email,
                             phone : customer.phone,
                             otp: forgotPasswordOtp
                         }
@@ -713,6 +713,7 @@ customerAPI.post('/changeEmail', jwtTokenValidator.validateToken, customerValida
 customerAPI.post('/resetEmail', jwtTokenValidator.validateToken, customerValidator.changeEmail ,async (req, res) => {
     try {
         const data = req.body
+        const newUpdatedEmail = data.email
         if(data){
             const userDetail = req.user
 
@@ -724,13 +725,13 @@ customerAPI.post('/resetEmail', jwtTokenValidator.validateToken, customerValidat
                     data : {
                         otp : data.otp,
                         cid : userDetail._id,
-                        email : userDetail.email
+                        email : newUpdatedEmail
                     }
                 })
             ])
             //#endregion
             if(isSuccess.data.success == true){
-                const newUpdatedEmail = data.email
+                
                 //update user email
                 const updateData = await User.updateOne({_id : userDetail._id},{
                     $set : {

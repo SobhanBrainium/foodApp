@@ -109,7 +109,8 @@ module.exports = {
                     return new Error('Please enter valid email');
                 }
             }),
-            // userType: joi.string().required().valid(...userTypeVal).error(new Error('Please send userType'))
+            userType: joi.string().required().valid(...userTypeVal).error(new Error('Please send userType')),
+            customerId : joi.string().required().error(new Error('Please send customerId')),
         });
 
         const value = await rules.validate(req.body);
