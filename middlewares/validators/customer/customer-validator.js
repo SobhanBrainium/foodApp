@@ -233,15 +233,22 @@ module.exports = {
     resendForgotPassOtp: async (req, res, next) => {
         const userTypeVal = ["customer", "deliveryboy", "vendorowner"];
         const rules = joi.object({
-            phone: joi.number().required().error((err) => {
+            // phone: joi.number().required().error((err) => {
+            //     if (err[0].value === undefined || err[0].value === '' || err[0].value === null) {
+            //         return new Error('Phone is required');
+            //     } else if (typeof err[0].value === 'string') {
+            //         return new Error('Please enter valid phone');
+            //     }
+            // }),  
+            email: joi.string().required().email().error((err) => {
                 if (err[0].value === undefined || err[0].value === '' || err[0].value === null) {
-                    return new Error('Phone is required');
-                } else if (typeof err[0].value === 'string') {
-                    return new Error('Please enter valid phone');
+                    return new Error('Email is required');
+                } else {
+                    return new Error('Please enter valid email');
                 }
-            }),  
+            }),
             usedFor : joi.string().required().error(new Error('usedFor is required')),
-            userType : joi.string().required().error(new Error('userType is required')),
+            // userType : joi.string().required().error(new Error('userType is required')),
         });
 
         const value = await rules.validate(req.body);

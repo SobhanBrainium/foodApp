@@ -2168,10 +2168,10 @@ customerAPI.post('/resendOtp', customerValidator.resendForgotPassOtp, async (req
     try {
         const data = req.body
         if (data) {
-            const isValid = await User.findOne({phone : data.phone})
+            let isValid = await User.findOne({email : data.email})
             if(isValid != null){
                 //deactivate old or unused OTP
-                const checkOldAndUnUsedOTP = await OTPLog.find({phone : data.phone, status : 1})
+                const checkOldAndUnUsedOTP = await OTPLog.find({email : data.email, status : 1})
                 if(checkOldAndUnUsedOTP.length >0){
                     //make status = 2 for expired, deactivate or used
                     _.forEach(checkOldAndUnUsedOTP, async (value, key) => {
@@ -2185,13 +2185,18 @@ customerAPI.post('/resendOtp', customerValidator.resendForgotPassOtp, async (req
                 const newOTP = generateOTP()
                 const addOTPToDb = new OTPLog({
                     userId : isValid._id,
-                    phone : isValid.phone,
+                    email : isValid.email,
                     otp : newOTP,
                     usedFor : data.usedFor,
                     status : 1
                 })
     
                 await addOTPToDb.save()
+
+                isValid = {
+                    ...isValid.toObject(),
+                    otp : newOTP
+                }
     
                 //sent mail with new OTP
                 mail('resendOtpMail')(isValid.email, isValid).send();
@@ -2201,7 +2206,7 @@ customerAPI.post('/resendOtp', customerValidator.resendForgotPassOtp, async (req
                     STATUSCODE: 200,
                     message: 'Please check your email. We have sent a code.',
                     response_data: {
-                        phone: isValid.phone,
+                        email: isValid.email,
                         otp: newOTP
                     }
                 })
@@ -2209,7 +2214,7 @@ customerAPI.post('/resendOtp', customerValidator.resendForgotPassOtp, async (req
                 res.send({
                     success: false,
                     STATUSCODE: 500,
-                    message: 'Phone number is not registered with us.',
+                    message: 'Your email does not match.',
                     response_data: {}
                 })
             }
